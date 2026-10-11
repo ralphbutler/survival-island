@@ -24,7 +24,7 @@ function loopedNoise(ctx, seconds, brown) {
 
 function volcanoNode(ctx) {
   const out = ctx.createGain();
-  out.gain.value = 1.4;
+  out.gain.value = VOLCANO_GAIN;
   const lp = ctx.createBiquadFilter();
   lp.type = 'lowpass';
   lp.frequency.value = 150;
@@ -98,6 +98,29 @@ function ambienceNode(ctx) {
 // ---------- one-shot effects and music (no-ops until startAudio has run) ----------
 let ctx = null, sfxOut = null, listener = null;
 export const getListener = () => listener;
+
+// Mixing: the volcano is quieter near the outpost (zone) and everything background dips while
+// someone is talking (duck), so the voices stay easy to hear.
+let volcanoOut = null, ambienceOut = null, duckTimer = 0;
+const VOLCANO_GAIN = 1.4, AMBIENCE_GAIN = 0.5;
+const level = { zone: 1, duck: 1 };
+function applyLevels() {
+  if (!ctx) return;
+  volcanoOut.gain.setTargetAtTime(VOLCANO_GAIN * level.zone * level.duck, ctx.currentTime, 0.35);
+  ambienceOut.gain.setTargetAtTime(AMBIENCE_GAIN * (0.6 + 0.4 * level.duck), ctx.currentTime, 0.35);
+}
+export function setVolcanoZone(factor) {
+  if (Math.abs(factor - level.zone) < 0.02) return;
+  level.zone = factor;
+  applyLevels();
+}
+// Duck the background for `seconds` (a new line restarts the timer).
+export function duckFor(seconds) {
+  level.duck = 0.35;
+  applyLevels();
+  clearTimeout(duckTimer);
+  duckTimer = setTimeout(() => { level.duck = 1; applyLevels(); }, seconds * 1000);
+}
 
 function tone(freq, t, dur, { type = 'sine', gain = 0.2, attack = 0.01, glideTo = null } = {}) {
   const o = ctx.createOscillator(), g = ctx.createGain();
@@ -237,7 +260,8 @@ export function startAudio(camera, volcanoAnchor) {
   sfxOut.connect(listener.getInput());
 
   const volcano = new THREE.PositionalAudio(listener);
-  volcano.setNodeSource(volcanoNode(ctx));
+  volcanoOut = volcanoNode(ctx);
+  volcano.setNodeSource(volcanoOut);
   volcano.setDistanceModel('linear');
   volcano.setRefDistance(15);
   volcano.setMaxDistance(260);
@@ -245,7 +269,8 @@ export function startAudio(camera, volcanoAnchor) {
   volcanoAnchor.add(volcano);
 
   const ambience = new THREE.Audio(listener);
-  ambience.setNodeSource(ambienceNode(ctx));
+  ambienceOut = ambienceNode(ctx);
+  ambience.setNodeSource(ambienceOut);
 
   let muted = false;
   return {

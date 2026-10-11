@@ -2,7 +2,7 @@
 // Gemini TTS) play as positional audio from the speaker when present. Lines live in voices/lines.json,
 // the single source for both the game and the voice generator.
 import * as THREE from 'three';
-import { getListener, positional } from './audio.js';
+import { getListener, positional, duckFor } from './audio.js';
 
 export async function loadLines() {
   const res = await fetch('voices/lines.json');
@@ -46,6 +46,7 @@ export class Dialogue {
       seconds = buf.duration + 0.4;
     }
     this.busyUntil = performance.now() + seconds * 1000;
+    if (buf) duckFor(seconds);   // lower the volcano and wind while the line plays
     this.el.innerHTML = `<b>${line.speaker}:</b> ${line.text}`;
     this.el.classList.remove('hidden');
     clearTimeout(this.hideTimer);

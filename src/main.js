@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
-import { buildTerrain, buildWater, VOLCANO, OUTPOST, FARM } from './terrain.js';
+import { buildTerrain, buildWater, VOLCANO, OUTPOST, FARM, smoothstep } from './terrain.js';
 import { buildVegetation } from './vegetation.js';
 import { buildDeck, findSpawn } from './props.js';
 import { buildVolcano } from './volcano.js';
@@ -15,7 +15,7 @@ import { Puzzle } from './puzzle.js';
 import { CoconutGame } from './coconut.js';
 import { Dialogue, loadLines } from './dialogue.js';
 import { FollowCamera } from './camera.js';
-import { startAudio } from './audio.js';
+import { startAudio, setVolcanoZone } from './audio.js';
 import { pressed, down, endFrame } from './input.js';
 
 // ---------- renderer, scene, camera ----------
@@ -216,7 +216,12 @@ renderer.setAnimationLoop(() => {
   dayNight.update(dt, camera.position, started, down('KeyT'));   // hold T to fast-forward time
   volcano.update(t, dayNight.night);
   coconut.update(dt);
-  if (started && hero) puzzle?.update(dt, t, hero);
+  if (started && hero) {
+    puzzle?.update(dt, t, hero);
+    // Volcano at about half volume inside the outpost clearing, back to full ~30 m beyond it.
+    const dOut = Math.hypot(hero.pos.x - OUTPOST.x, hero.pos.z - OUTPOST.z);
+    setVolcanoZone(0.45 + 0.55 * smoothstep(OUTPOST.r, OUTPOST.r + 30, dOut));
+  }
 
   // Shadows only need to cover the area around the hero; the sun follows.
   sun.position.copy(focus).addScaledVector(sunDir, 200);
