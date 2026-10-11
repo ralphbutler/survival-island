@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asset Zoo</title>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --card: rgba(255, 255, 255, 0.93); --ink: #1d2a33; --accent: #e8572a; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #9cc4e4; font-family: Nunito, system-ui, sans-serif; color: var(--ink); }
+  canvas { display: block; }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  .tag { font: 700 12px Nunito, sans-serif; background: rgba(20, 28, 34, 0.75); color: #fff; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .tag.sel { background: var(--accent); }
+  .panel { position: fixed; background: var(--card); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.2); padding: 12px 14px; }
+  #cats { top: 14px; left: 14px; display: flex; gap: 6px; align-items: center; }
+  #cats h1 { font: 400 22px 'Luckiest Guy', cursive; color: var(--accent); margin: 0 10px 0 2px; letter-spacing: 1px; }
+  button { font: 700 14px Nunito, sans-serif; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; background: #e7ecf0; color: var(--ink); }
+  button.on { background: var(--accent); color: #fff; }
+  #info { top: 70px; right: 14px; width: 260px; max-height: calc(100vh - 110px); overflow: auto; }
+  #info h2 { margin: 0 0 4px; font-size: 18px; }
+  #info .meta { font-size: 13px; color: #556; margin-bottom: 10px; }
+  #anims { display: flex; flex-wrap: wrap; gap: 6px; }
+  #hint { bottom: 14px; left: 14px; font-size: 13px; }
+  #status { top: 70px; left: 14px; font-size: 13px; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+  <div id="cats" class="panel">
+    <h1>Asset Zoo</h1>
+    <button data-cat="characters">Characters</button>
+    <button data-cat="animals">Animals</button>
+    <button data-cat="farm">Farm buildings</button>
+    <button data-cat="crops">Crops</button>
+  </div>
+  <div id="status" class="panel">Loading…</div>
+  <div id="info" class="panel" hidden>
+    <h2 id="name"></h2>
+    <div class="meta" id="meta"></div>
+    <div id="anims"></div>
+  </div>
+  <div id="hint" class="panel">Click a model to inspect it and play its animations · drag to orbit · scroll to zoom · the orange robot (1.8 m) is there for scale</div>
+  <div id="labels"></div>
+  <script type="module" src="src/zoo.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Raw Quaternius downloads (~300 MB) -- re-download from quaternius.com if you want to convert more
+assets/quaternius/
+# Generated / local
+docs/WHAT_WE_DID_email.html
+watch_output/
+__pycache__/
+.DS_Store

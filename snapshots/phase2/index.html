@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Survival Island</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1d2a33; --card: rgba(255, 255, 255, 0.92); --accent: #e8572a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #9cc4e4; font-family: Nunito, system-ui, sans-serif; color: var(--ink); }
+  canvas { display: block; }
+  .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 7vh; pointer-events: none; text-align: center; }
+  .overlay > * { pointer-events: auto; }
+  h1 { font-family: 'Luckiest Guy', cursive; font-size: clamp(48px, 9vw, 110px); margin: 0; color: #fff; letter-spacing: 2px;
+       text-shadow: 0 4px 0 var(--accent), 0 8px 24px rgba(0, 0, 0, 0.35); }
+  .premise { max-width: 560px; margin: 14px 16px 22px; font-size: 18px; line-height: 1.45; background: var(--card); padding: 14px 20px; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
+  button { font: 700 20px Nunito, sans-serif; padding: 12px 34px; border: 0; border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; box-shadow: 0 4px 0 #a83a17; }
+  button:disabled { background: #999; box-shadow: 0 4px 0 #666; cursor: wait; }
+  .phase { margin-top: 14px; font-size: 14px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .hidden { display: none !important; }
+  #help { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); border-radius: 16px; padding: 20px 26px; box-shadow: 0 10px 40px rgba(0,0,0,.3); min-width: 340px; }
+  #help h2 { margin: 0 0 10px; font-family: 'Luckiest Guy', cursive; font-weight: 400; letter-spacing: 1px; color: var(--accent); }
+  #help table { border-collapse: collapse; font-size: 15px; }
+  #help td { padding: 4px 10px 4px 0; vertical-align: top; }
+  kbd { font: 700 12px ui-monospace, monospace; background: #eef2f5; border: 1px solid #c7d0d8; border-bottom-width: 2px; border-radius: 5px; padding: 2px 6px; white-space: nowrap; }
+  #hud { position: fixed; left: 16px; bottom: 14px; display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  #hud .pill { background: var(--card); padding: 5px 12px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .battery { display: flex; align-items: center; gap: 6px; }
+  .battery .cells { display: flex; gap: 3px; padding: 3px; border: 2px solid #2b3a44; border-radius: 5px; position: relative; }
+  .battery .cells::after { content: ''; position: absolute; right: -6px; top: 5px; width: 3px; height: 8px; background: #2b3a44; border-radius: 0 2px 2px 0; }
+  .battery .cell { width: 12px; height: 12px; border-radius: 2px; background: #d7dde2; transition: background .3s; }
+  .battery[data-n="1"] .cell:nth-child(-n+1), .battery[data-n="2"] .cell:nth-child(-n+2) { background: #f0b429; }
+  .battery[data-n="3"] .cell:nth-child(-n+3) { background: #f0b429; }
+  .battery[data-n="4"] .cell { background: #3cc46a; }
+  .match { display: inline-block; width: 4px; height: 16px; background: #d9b07a; border-radius: 2px; position: relative; margin-right: 4px; vertical-align: -3px; }
+  .match::before { content: ''; position: absolute; top: -4px; left: -2px; width: 8px; height: 8px; border-radius: 50%; background: #d23a2c; }
+  #subtitle { position: fixed; bottom: 64px; left: 50%; transform: translateX(-50%); max-width: min(760px, 90vw); background: rgba(20, 28, 34, 0.82); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 18px; line-height: 1.4; text-align: center; }
+  #subtitle b { color: #8fffe0; }
+  #crosshair { position: fixed; width: 28px; height: 28px; margin: -14px 0 0 -14px; border: 3px solid #4cff6a; border-radius: 50%; pointer-events: none; box-shadow: 0 0 0 1px rgba(0,0,0,.4); }
+  #crosshair::after { content: ''; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; background: #4cff6a; border-radius: 50%; }
+  #aimhint { position: fixed; top: 18px; right: 18px; }
+  body.aiming canvas { cursor: none; }
+  body:not(.aiming) #aimhint { display: none; }
+  .world-label { font: 700 16px Nunito, sans-serif; color: #fff; background: #c8322a; padding: 5px 12px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,.3); white-space: nowrap; }
+  #banner { position: fixed; top: 22%; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; transition: opacity 1s; }
+  #banner h2 { font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: clamp(36px, 6vw, 72px); margin: 0; color: #fff; text-shadow: 0 4px 0 var(--accent), 0 8px 24px rgba(0,0,0,.35); }
+  #banner p { margin: 6px 0 0; font-size: 22px; font-weight: 700; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.6); }
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+  #toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); background: var(--card); padding: 8px 18px; border-radius: 999px; font-weight: 700; box-shadow: 0 4px 16px rgba(0,0,0,.2); transition: opacity .4s; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="title" class="overlay">
+    <h1>Survival Island</h1>
+    <p class="premise">You've washed ashore on a little island, and night is coming.
+      Find the campfire and figure out how to light it.</p>
+    <button id="start" disabled>Loading…</button>
+    <p class="phase">Phase 2 preview: the puzzle is in · press <kbd>H</kbd> for controls</p>
+  </div>
+
+  <div id="help" class="hidden">
+    <h2>Controls</h2>
+    <table>
+      <tr><td><kbd>W A S D</kbd> / arrows</td><td>Move (relative to the camera)</td></tr>
+      <tr><td><kbd>Shift</kbd></td><td>Run (or fly faster)</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>Jump</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Toggle flying</td></tr>
+      <tr><td><kbd>E</kbd> / <kbd>C</kbd></td><td>Fly up / down</td></tr>
+      <tr><td>Left-drag</td><td>Orbit the camera</td></tr>
+      <tr><td>Right-drag</td><td>Orbit and turn the hero to match</td></tr>
+      <tr><td>Scroll</td><td>Zoom</td></tr>
+      <tr><td><kbd>G</kbd> / <kbd>V</kbd></td><td>Wave / dance</td></tr>
+      <tr><td><kbd>M</kbd></td><td>Mute</td></tr>
+      <tr><td><kbd>H</kbd></td><td>This help</td></tr>
+    </table>
+  </div>
+
+  <div id="hud" class="hidden">
+    <span class="pill battery" id="battery" data-n="0" title="Power cells">
+      <span class="cells"><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span></span>
+    </span>
+    <span class="pill hidden" id="matchesBadge"><span class="match"></span>Matches</span>
+    <span class="pill" id="mode">Walking</span>
+    <span class="pill"><kbd>H</kbd> controls</span>
+  </div>
+  <div id="labels"></div>
+  <div id="subtitle" class="hidden"></div>
+  <div id="crosshair" class="hidden"></div>
+  <div id="aimhint" class="pill">Click to throw · arrow keys or <kbd>Esc</kbd> to step off</div>
+  <div id="banner" style="opacity:0"><h2></h2><p></p></div>
+  <div id="toast" style="opacity:0"></div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
