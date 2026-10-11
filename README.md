@@ -106,7 +106,7 @@ uv run tools/make_voices.py --force        # remake all of them
 uv run tools/make_voices.py                # make only the missing ones
 ```
 
-This uses `GEMINI_API_KEY`. The free tier allows about 3 voice requests per minute, so the script waits between lines. If a clip is missing, the game simply shows the subtitle.
+This uses `GEMINI_API_KEY`. The free tier allows about 3 voice requests per minute and **only 10 per day**, so the script waits between lines. Only the line itself is sent: the voice model reads any stage direction aloud, so a character's personality comes from the chosen voice (Puck, Aoede). If a clip is missing, the game simply shows the subtitle.
 
 ## 🗂️ Code map
 

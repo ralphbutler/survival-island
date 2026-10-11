@@ -10,7 +10,8 @@
     uv run tools/make_voices.py --force      # remake all clips (after editing lines)
     uv run tools/make_voices.py rory_intro   # (re)make just these ids
 
-Writes voices/<id>.wav (24 kHz mono 16-bit). The free tier allows ~3 TTS requests per
+Writes voices/<id>.wav (24 kHz mono 16-bit). Only the line text is sent (the voice model reads
+any style direction aloud). Free tier: ~3 requests/minute and only 10/day for gemini-3.8-flash-tts. The free tier allows ~3 TTS requests per
 minute, so a full run pauses between lines and takes a few minutes. The game plays a clip if it exists and
 shows subtitles either way. Key from GEMINI_API_KEY (or GOOGLE_API_KEY).
 """
@@ -87,9 +88,13 @@ def main() -> None:
             continue
         who = data["voices"][line["speaker"]]
         print(f"make  {line_id} ({line['speaker']}, {who['voice']})")
-        pcm = synthesize(client, f"{who['style']} {line['text']}", who["voice"])
+        # Send ONLY the line: the TTS model reads any direction aloud ("Say this like...", even
+        # "Say cheerfully:"), and system instructions are rejected. Character comes from the voice.
+        pcm = synthesize(client, line["text"], who["voice"])
         write_wav(out, pcm)
-        print(f"      {out.relative_to(ROOT)}  {len(pcm) / 48000:.1f}s")
+        secs, expected = len(pcm) / 48000, 1.5 + len(line["text"].split()) / 2.2
+        warn = "  <-- longer than expected; listen for extra speech" if secs > expected * 1.4 else ""
+        print(f"      {out.relative_to(ROOT)}  {secs:.1f}s{warn}")
 
 
 if __name__ == "__main__":

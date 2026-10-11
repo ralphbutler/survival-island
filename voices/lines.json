@@ -1,20 +1,60 @@
 {
   "voices": {
-    "Rory": { "voice": "Puck", "style": "Say this like a friendly, upbeat castaway who is glad to see a new face, casual and warm:" },
-    "Raleigh": { "voice": "Aoede", "style": "Say this like a cheerful, quick-witted castaway who enjoys giving hints, bright and encouraging:" }
+    "Rory": {
+      "voice": "Puck"
+    },
+    "Raleigh": {
+      "voice": "Aoede"
+    }
   },
   "lines": {
-    "rory_intro": { "speaker": "Rory", "text": "Hey, you made it! We washed up here too. See that bunker? Site B. There are matches inside, but the door's out of power. It needs four power cells. I've spotted three of them lying around outside, close by. Find them, and we can get that door open." },
-    "rory_progress": { "speaker": "Rory", "text": "Nice, you've found some! The rest are close. Try looking around the outside of the buildings." },
-    "rory_three": { "speaker": "Rory", "text": "Three cells! One more to go. Go and talk to Raleigh. I think she knows where the last one is." },
-    "rory_four": { "speaker": "Rory", "text": "That's all four! Head over to the Site B door. It should open for you now." },
-    "rory_door_open": { "speaker": "Rory", "text": "The door's open! The matches should be somewhere inside." },
-    "rory_matches": { "speaker": "Rory", "text": "You've got the matches! Now get that campfire going before it gets dark." },
-    "rory_fire": { "speaker": "Rory", "text": "Now that's a campfire! Thanks, friend. Nobody's freezing tonight." },
-    "raleigh_intro": { "speaker": "Raleigh", "text": "Hi there! Looking for power cells? The carnival booth gives one away as a prize. Stand on the yellow mat out front and knock the target down with coconuts." },
-    "raleigh_won": { "speaker": "Raleigh", "text": "Great throw! That cell's all yours. Grab it off the stand inside the booth." },
-    "raleigh_four": { "speaker": "Raleigh", "text": "You've got the prize! Now try the Site B door." },
-    "raleigh_door_open": { "speaker": "Raleigh", "text": "The door's open? Go and grab those matches!" },
-    "raleigh_fire": { "speaker": "Raleigh", "text": "You did it! Look at that fire. Now that deserves some music." }
+    "rory_intro": {
+      "speaker": "Rory",
+      "text": "Hey, you made it! We washed up here too. See that bunker? Site B. There are matches inside, but the door's out of power. It needs four power cells. I've spotted three of them lying around outside, close by. Find them, and we can get that door open."
+    },
+    "rory_progress": {
+      "speaker": "Rory",
+      "text": "Nice, you've found some! The rest are close. Try looking around the outside of the buildings."
+    },
+    "rory_three": {
+      "speaker": "Rory",
+      "text": "Three cells! One more to go. Go and talk to Raleigh. I think she knows where the last one is."
+    },
+    "rory_four": {
+      "speaker": "Rory",
+      "text": "That's all four! Head over to the Site B door. It should open for you now."
+    },
+    "rory_door_open": {
+      "speaker": "Rory",
+      "text": "The door's open! The matches should be somewhere inside."
+    },
+    "rory_matches": {
+      "speaker": "Rory",
+      "text": "You've got the matches! Now get that campfire going before it gets dark."
+    },
+    "rory_fire": {
+      "speaker": "Rory",
+      "text": "Now that's a campfire! Thanks, friend. Nobody's freezing tonight."
+    },
+    "raleigh_intro": {
+      "speaker": "Raleigh",
+      "text": "Hi there! Looking for power cells? The carnival booth gives one away as a prize. Stand on the yellow mat out front and knock the target down with coconuts."
+    },
+    "raleigh_won": {
+      "speaker": "Raleigh",
+      "text": "Great throw! That cell's all yours. Grab it off the stand inside the booth."
+    },
+    "raleigh_four": {
+      "speaker": "Raleigh",
+      "text": "You've got the prize! Now try the Site B door."
+    },
+    "raleigh_door_open": {
+      "speaker": "Raleigh",
+      "text": "The door's open? Go and grab those matches!"
+    },
+    "raleigh_fire": {
+      "speaker": "Raleigh",
+      "text": "You did it! Look at that fire. Now that deserves some music."
+    }
   }
 }
