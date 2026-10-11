@@ -102,7 +102,7 @@ export const getListener = () => listener;
 // Mixing: the volcano is quieter near the outpost (zone) and everything background dips while
 // someone is talking (duck), so the voices stay easy to hear.
 let volcanoOut = null, ambienceOut = null, duckTimer = 0;
-const VOLCANO_GAIN = 1.4, AMBIENCE_GAIN = 0.5;
+const VOLCANO_GAIN = 0.85, AMBIENCE_GAIN = 0.5;   // volcano was 1.4 -- too loud on arrival
 const level = { zone: 1, duck: 1 };
 function applyLevels() {
   if (!ctx) return;
